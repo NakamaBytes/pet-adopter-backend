@@ -1,6 +1,6 @@
 
 import { Hono } from 'hono';
-import { upload, uploadThing } from '../controllers/storage/file.controller';
+import { upload, uploadThing } from '../../controllers/v1/storage/file.controller';
 
 const app = new Hono();
 

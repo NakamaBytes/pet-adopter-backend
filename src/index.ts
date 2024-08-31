@@ -5,7 +5,7 @@ import { logger } from 'hono/logger';
 import { timeout } from 'hono/timeout';
 import { jwt } from 'hono/jwt';
 import type { JwtVariables } from 'hono/jwt';
-import routes from './routes';
+import routes from './routes/v1';
 import { errorHandler } from './middleware/error.middleware';
 import { join } from 'path';
 
@@ -55,7 +55,7 @@ app.use('/file-data/*', serveStatic({
   }
 }));
 
-app.route('/api', routes); // Ensure routes are correct and match
+app.route('/api/v1', routes); // Ensure routes are correct and match
 
 app.onError(errorHandler);
 

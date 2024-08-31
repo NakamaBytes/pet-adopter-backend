@@ -1,6 +1,6 @@
 import { jwt } from "hono/jwt";
 import { catchAsync } from "../utils/catchAsync";
-import { getUserById } from "../services/auth.service";
+import { getUserById } from "../services/v1/auth.service";
 import { isEmpty } from "lodash";
 import ApiError from "../utils/ApiError";
 import * as HttpStatus from "http-status";
