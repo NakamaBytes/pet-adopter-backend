@@ -1,0 +1,204 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String              @id @default(uuid()) @db.Uuid
+  username           String              @unique
+  firstName          String?
+  lastName           String?
+  phone              String?
+  address            String?
+  email              String              @unique
+  password           String
+  image_url          String?
+  lon                String?
+  lat                String?
+  birthDate          DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now()) @updatedAt
+  emailConfirmations EmailConfirmation[]
+  phoneConfirmations PhoneConfirmation[]
+  roles              TrUserRole[]
+  PetUser            PetUser[]
+  AdoptionUser       AdoptionUser[]
+  UserShelter        UserShelter[]
+}
+
+model TrUserRole {
+  id        String   @id @default(uuid()) @db.Uuid
+  roleId    String   @db.Uuid
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  role      Role     @relation(fields: [roleId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Role {
+  id          String       @id @default(uuid()) @db.Uuid
+  name        RoleName     @unique
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
+  userRoles   TrUserRole[]
+}
+
+model EmailConfirmation {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @db.Uuid
+  confirmationCode String   @unique
+  isConfirmed      Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model PhoneConfirmation {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  otpCode    String
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Pet {
+  id           String         @id @default(uuid()) @db.Uuid
+  speciesId    String
+  name         String
+  gender       Gender         @default(Male)
+  age          DateTime
+  color        String
+  pet_image    String
+  description  String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
+  PetUser      PetUser[]
+  PetGallery   PetGallery[]
+  AdoptionUser AdoptionUser[]
+  PetShelter   PetShelter[]
+
+  species Species @relation(fields: [speciesId], references: [id], onDelete: Cascade)
+}
+
+model PetUser {
+  id        String   @id @default(uuid()) @db.Uuid
+  petId     String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  users User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pets  Pet  @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model PetGallery {
+  id        String   @id @default(uuid()) @db.Uuid
+  petId     String
+  assetURL  String
+  assetType String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  pet       Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model AdoptionUser {
+  id        String         @id @default(uuid()) @db.Uuid
+  userId    String
+  petId     String
+  status    AdoptionStatus
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @default(now()) @updatedAt
+  users     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pets      Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model Shelter {
+  id             String           @id @default(uuid()) @db.Uuid
+  name           String
+  image_url      String?
+  description    String?
+  address        String?
+  lon            String?
+  lat            String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now()) @updatedAt
+  ShelterGallery ShelterGallery[]
+  PetShelter     PetShelter[]
+  UserShelter    UserShelter[]
+}
+
+model ShelterGallery {
+  id        String   @id @default(uuid()) @db.Uuid
+  shelterId String
+  assetURL  String
+  assetType String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  shelters  Shelter  @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+}
+
+model UserShelter {
+  id        String          @id @default(uuid()) @db.Uuid
+  userId    String
+  shelterId String
+  role      RoleShelterName @default(OWNER)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now()) @updatedAt
+  users     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shelters  Shelter         @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+}
+
+model PetShelter {
+  id        String   @id @default(uuid()) @db.Uuid
+  petId     String
+  shelterId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Pets      Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
+  shelters  Shelter  @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+}
+
+// Master
+model Species {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Pet       Pet[]
+}
+
+enum RoleName {
+  USER
+  ADMINISTRATOR
+}
+
+enum RoleShelterName {
+  MEMBER
+  OWNER
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+enum AdoptionStatus {
+  AVAILABLE
+  PENDING
+  ADOPTED
+}
