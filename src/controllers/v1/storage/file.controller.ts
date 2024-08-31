@@ -1,10 +1,10 @@
-import { catchAsync } from "../../../utils/catchAsync";
+import { catchAsync } from "@utils/catchAsync";
 import *  as httpStatus from "http-status";
 import { join } from "path";
 import { writeFile } from "fs/promises";
-import { utapi } from "../../../utils/uploadthing";
-import { toWebp } from "../../../services/v1/image.service";
-import { fileUtils } from "../../../utils/fileUtils";
+import { utapi } from "@utils/uploadthing";
+import { toWebp } from "@services/v1/image.service";
+import { fileUtils } from "@utils/fileUtils";
 
 
 export const upload = catchAsync(async (c) => {

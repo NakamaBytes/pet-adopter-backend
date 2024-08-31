@@ -8,5 +8,38 @@
       "./types"
     ],
     "esModuleInterop": true,
+    "baseUrl": ".", // Set the baseUrl to the root directory
+    "paths": {
+      "@controller/*": [
+        "src/controller/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@middleware/*": [
+        "src/middleware/*"
+      ],
+      "@routes/*": [
+        "src/routes/*"
+      ],
+      "types/*": [
+        "src/types/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@validator/*": [
+        "src/validator/*"
+      ],
+      "@queues/*": [
+        "src/queues/*"
+      ],
+      "@workers/*": [
+        "src/workers/*"
+      ],
+      "@bin/*": [
+        "src/bin/*"
+      ],
+    }
   }
 }
