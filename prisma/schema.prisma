@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -73,7 +74,7 @@ model PhoneConfirmation {
 
 model Pet {
   id           String         @id @default(uuid()) @db.Uuid
-  speciesId    String
+  speciesId    String         @db.Uuid
   name         String
   gender       Gender         @default(Male)
   age          DateTime
@@ -92,8 +93,8 @@ model Pet {
 
 model PetUser {
   id        String   @id @default(uuid()) @db.Uuid
-  petId     String
-  userId    String
+  petId     String   @db.Uuid
+  userId    String   @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -103,7 +104,7 @@ model PetUser {
 
 model PetGallery {
   id        String   @id @default(uuid()) @db.Uuid
-  petId     String
+  petId     String   @db.Uuid
   assetURL  String
   assetType String
   createdAt DateTime @default(now())
@@ -113,8 +114,8 @@ model PetGallery {
 
 model AdoptionUser {
   id        String         @id @default(uuid()) @db.Uuid
-  userId    String
-  petId     String
+  userId    String         @db.Uuid
+  petId     String         @db.Uuid
   status    AdoptionStatus
   createdAt DateTime       @default(now())
   updatedAt DateTime       @default(now()) @updatedAt
@@ -139,7 +140,7 @@ model Shelter {
 
 model ShelterGallery {
   id        String   @id @default(uuid()) @db.Uuid
-  shelterId String
+  shelterId String   @db.Uuid
   assetURL  String
   assetType String
   createdAt DateTime @default(now())
@@ -149,8 +150,8 @@ model ShelterGallery {
 
 model UserShelter {
   id        String          @id @default(uuid()) @db.Uuid
-  userId    String
-  shelterId String
+  userId    String          @db.Uuid
+  shelterId String          @db.Uuid
   role      RoleShelterName @default(OWNER)
   createdAt DateTime        @default(now())
   updatedAt DateTime        @default(now()) @updatedAt
@@ -160,8 +161,8 @@ model UserShelter {
 
 model PetShelter {
   id        String   @id @default(uuid()) @db.Uuid
-  petId     String
-  shelterId String
+  petId     String   @db.Uuid
+  shelterId String   @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   Pets      Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
