@@ -70,8 +70,6 @@ export const create = ({ data, userId }: { data: PetPayload; userId: string; }) 
 };
 
 export const update = ({ data, userId, petId }: { data: PetTypes; userId: string; petId: string; }) => {
-  console.log(data, userId, petId);
-
   return prisma.pet.update({
     where: {
       id: petId,

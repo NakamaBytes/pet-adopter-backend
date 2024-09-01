@@ -10,19 +10,19 @@ export const find = ({ id, name }: ShelterTypes) => {
         { name: name },
       ],
     },
-  });
-};
-
-export const get = () => {
-  return prisma.shelter.findMany({
     include: {
       PetShelter: {
         select: {
+          id: true,
           Pets: true
         }
       }
     }
   });
+};
+
+export const get = () => {
+  return prisma.shelter.findMany({});
 };
 
 export const create = ({ data, userId }: { data: ShelterPayload; userId: string; }) => {
