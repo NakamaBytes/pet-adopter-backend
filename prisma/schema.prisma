@@ -26,9 +26,8 @@ model User {
   emailConfirmations EmailConfirmation[]
   phoneConfirmations PhoneConfirmation[]
   roles              TrUserRole[]
-  PetUser            PetUser[]
-  AdoptionUser       AdoptionUser[]
-  UserShelter        UserShelter[]
+  adoptions          AdoptionUser[]
+  shelters           UserShelter[]
 }
 
 model TrUserRole {
@@ -73,33 +72,21 @@ model PhoneConfirmation {
 }
 
 model Pet {
-  id           String         @id @default(uuid()) @db.Uuid
-  speciesId    String         @db.Uuid
-  name         String
-  gender       Gender         @default(Male)
-  age          DateTime
-  color        String
-  pet_image    String
-  description  String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @default(now()) @updatedAt
-  PetUser      PetUser[]
-  PetGallery   PetGallery[]
-  AdoptionUser AdoptionUser[]
-  PetShelter   PetShelter[]
+  id          String         @id @default(uuid()) @db.Uuid
+  speciesId   String         @db.Uuid
+  name        String
+  gender      Gender         @default(Male)
+  age         Int            @default(0)
+  color       String
+  pet_image   String?
+  description String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now()) @updatedAt
+  galleries   PetGallery[]
+  adoptions   AdoptionUser[]
+  pets        PetShelter[]
 
   species Species @relation(fields: [speciesId], references: [id], onDelete: Cascade)
-}
-
-model PetUser {
-  id        String   @id @default(uuid()) @db.Uuid
-  petId     String   @db.Uuid
-  userId    String   @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  users User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pets  Pet  @relation(fields: [petId], references: [id], onDelete: Cascade)
 }
 
 model PetGallery {
@@ -113,29 +100,32 @@ model PetGallery {
 }
 
 model AdoptionUser {
-  id        String         @id @default(uuid()) @db.Uuid
-  userId    String         @db.Uuid
-  petId     String         @db.Uuid
-  status    AdoptionStatus
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @default(now()) @updatedAt
-  users     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pets      Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
+  id            String         @id @default(uuid()) @db.Uuid
+  userId        String         @db.Uuid
+  petId         String         @db.Uuid
+  status        AdoptionStatus
+  isCurrentUser Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
+  users         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pets          Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, userId])
 }
 
 model Shelter {
-  id             String           @id @default(uuid()) @db.Uuid
-  name           String
-  image_url      String?
-  description    String?
-  address        String?
-  lon            String?
-  lat            String?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now()) @updatedAt
-  ShelterGallery ShelterGallery[]
-  PetShelter     PetShelter[]
-  UserShelter    UserShelter[]
+  id          String           @id @default(uuid()) @db.Uuid
+  name        String
+  image_url   String?
+  description String?
+  address     String?
+  lon         String?
+  lat         String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @default(now()) @updatedAt
+  galleries   ShelterGallery[]
+  pets        PetShelter[]
+  users       UserShelter[]
 }
 
 model ShelterGallery {
@@ -145,7 +135,7 @@ model ShelterGallery {
   assetType String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  shelters  Shelter  @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+  shelter   Shelter  @relation(fields: [shelterId], references: [id], onDelete: Cascade)
 }
 
 model UserShelter {
@@ -157,16 +147,22 @@ model UserShelter {
   updatedAt DateTime        @default(now()) @updatedAt
   users     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   shelters  Shelter         @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+
+  @@index([userId, shelterId])
 }
 
 model PetShelter {
-  id        String   @id @default(uuid()) @db.Uuid
-  petId     String   @db.Uuid
-  shelterId String   @db.Uuid
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  Pets      Pet      @relation(fields: [petId], references: [id], onDelete: Cascade)
-  shelters  Shelter  @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+  id               String         @id @default(uuid()) @db.Uuid
+  petId            String         @db.Uuid
+  shelterId        String         @db.Uuid
+  status           ApprovalStatus @default(PENDING)
+  isCurrentShelter Boolean        @default(true)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @default(now()) @updatedAt
+  pets             Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
+  shelters         Shelter        @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+
+  @@index([petId, shelterId])
 }
 
 // Master
@@ -175,7 +171,7 @@ model Species {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  Pet       Pet[]
+  pet       Pet[]
 }
 
 enum RoleName {
@@ -198,8 +194,17 @@ enum Gender {
   Female
 }
 
+enum ApprovalStatus {
+  PENDING
+  REJECTED
+  APPROVED
+}
+
 enum AdoptionStatus {
   AVAILABLE
   PENDING
   ADOPTED
+  NOT_AVAILABLE
+  RESCUED
+  UNDER_CONSIDERATION
 }
