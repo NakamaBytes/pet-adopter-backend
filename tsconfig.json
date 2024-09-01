@@ -10,8 +10,8 @@
     "esModuleInterop": true,
     "baseUrl": ".", // Set the baseUrl to the root directory
     "paths": {
-      "@controller/*": [
-        "src/controller/*"
+      "@controllers/*": [
+        "src/controllers/*"
       ],
       "@services/*": [
         "src/services/*"

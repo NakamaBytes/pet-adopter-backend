@@ -6,6 +6,7 @@ import { StatusCode } from "hono/utils/http-status";
 import ApiError from "../utils/ApiError";
 
 const handlePrismaError = (error: Prisma.PrismaClientKnownRequestError) => {
+  console.log(error?.meta?.target, "-----error-----");
 
   switch (error.stack) {
     case 'P2002':
