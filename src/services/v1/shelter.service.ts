@@ -39,10 +39,10 @@ export const create = ({ data, userId }: { data: ShelterPayload; userId: string;
   });
 };
 
-export const update = ({ data, userId, petId }: { data: ShelterPayload; userId: string; petId: string; }) => {
+export const update = ({ data, userId, shelterId }: { data: ShelterPayload; userId: string; shelterId: string; }) => {
   return prisma.shelter.update({
     where: {
-      id: petId,
+      id: shelterId,
       UserShelter: {
         every: {
           userId: userId,
@@ -56,10 +56,10 @@ export const update = ({ data, userId, petId }: { data: ShelterPayload; userId: 
   });
 };
 
-export const remove = ({ userId, petId }: { userId: string; petId: string; }) => {
+export const remove = ({ userId, shelterId }: { userId: string; shelterId: string; }) => {
   return prisma.shelter.delete({
     where: {
-      id: petId,
+      id: shelterId,
       UserShelter: {
         every: {
           userId: userId,
