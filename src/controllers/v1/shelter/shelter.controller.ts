@@ -14,7 +14,7 @@ export const find = catchAsync(async (c) => {
 
   const shelterId = c.req.param("shelterId");
   const shelters = await findShelter({ id: shelterId });
-  const pets = map(shelters?.pets, ({ pets: pet, status }) => ({ ...pet, status }));
+  const pets = map(shelters?.pets, ({ pet, status }) => ({ ...pet, status }));
 
   return c.json({ data: { ...shelters, pets } });
 });

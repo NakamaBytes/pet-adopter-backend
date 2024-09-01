@@ -13,8 +13,7 @@ export const find = ({ id, name }: ShelterTypes) => {
     include: {
       pets: {
         include: {
-          pets: true
-
+          pet: true
         }
       }
     }

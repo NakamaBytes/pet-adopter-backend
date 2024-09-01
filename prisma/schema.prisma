@@ -84,7 +84,7 @@ model Pet {
   updatedAt   DateTime       @default(now()) @updatedAt
   galleries   PetGallery[]
   adoptions   AdoptionUser[]
-  pets        PetShelter[]
+  shelter     PetShelter[]
 
   species Species @relation(fields: [speciesId], references: [id], onDelete: Cascade)
 }
@@ -107,8 +107,8 @@ model AdoptionUser {
   isCurrentUser Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @default(now()) @updatedAt
-  users         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  pets          Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pet           Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
 
   @@index([petId, userId])
 }
@@ -145,8 +145,8 @@ model UserShelter {
   role      RoleShelterName @default(OWNER)
   createdAt DateTime        @default(now())
   updatedAt DateTime        @default(now()) @updatedAt
-  users     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  shelters  Shelter         @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shelter   Shelter         @relation(fields: [shelterId], references: [id], onDelete: Cascade)
 
   @@index([userId, shelterId])
 }
@@ -159,8 +159,8 @@ model PetShelter {
   isCurrentShelter Boolean        @default(true)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @default(now()) @updatedAt
-  pets             Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
-  shelters         Shelter        @relation(fields: [shelterId], references: [id], onDelete: Cascade)
+  pet              Pet            @relation(fields: [petId], references: [id], onDelete: Cascade)
+  shelter          Shelter        @relation(fields: [shelterId], references: [id], onDelete: Cascade)
 
   @@index([petId, shelterId])
 }
@@ -202,6 +202,7 @@ enum ApprovalStatus {
 
 enum AdoptionStatus {
   AVAILABLE
+  REQUEST_ADOPTION
   PENDING
   ADOPTED
   NOT_AVAILABLE

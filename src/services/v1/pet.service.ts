@@ -11,24 +11,82 @@ export const find = ({ id, name }: PetTypes) => {
         { name: name },
       ],
     },
+    include: {
+      species: true,
+      shelter: {
+        include: {
+          shelter: {
+            select: {
+              name: true,
+              description: true,
+              lat: true,
+              lon: true
+            }
+          }
+        }
+      },
+      adoptions: {
+        include: {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true
+            }
+          }
+        }
+      }
+    }
   });
 };
 
 export const get = () => {
   return prisma.pet.findMany({
     where: {
-      users: {
-        every: {
-          status: "AVAILABLE"
+      OR: [
+        {
+          adoptions: {
+            every: {
+              status: "AVAILABLE",
+              isCurrentUser: true
+            },
+          },
+          shelter: {
+            none: {}
+          },
+        },
+        {
+          shelter: {
+            every: {
+              status: "APPROVED",
+              isCurrentShelter: true
+            },
+          },
+          adoptions: {
+            every: {
+              status: "AVAILABLE",
+              isCurrentUser: true
+            },
+          },
         }
-      }
+      ],
     },
     include: {
       species: true,
-      pets: true,
-      users: {
-        select: {
-          users: {
+      shelter: {
+        include: {
+          shelter: {
+            select: {
+              name: true,
+              description: true,
+              lat: true,
+              lon: true
+            }
+          }
+        }
+      },
+      adoptions: {
+        include: {
+          user: {
             select: {
               firstName: true,
               lastName: true,
@@ -50,7 +108,7 @@ export const create = ({ data, userId }: { data: PetPayload; userId: string; }) 
       pet_image: has(data, "pet_image") ? data?.pet_image as string : '',
       gender: data.gender,
       speciesId: data.speciesId,
-      users: {
+      adoptions: {
         create: {
           status: "NOT_AVAILABLE",
           userId: userId,
@@ -65,7 +123,7 @@ export const update = ({ data, userId, petId }: { data: PetTypes; userId: string
   return prisma.pet.update({
     where: {
       id: petId,
-      users: {
+      adoptions: {
         every: {
           userId: userId,
           isCurrentUser: true,
@@ -89,7 +147,7 @@ export const remove = ({ userId, petId }: { userId: string; petId: string; }) =>
   return prisma.pet.delete({
     where: {
       id: petId,
-      users: {
+      adoptions: {
         every: {
           userId: userId,
           isCurrentUser: true

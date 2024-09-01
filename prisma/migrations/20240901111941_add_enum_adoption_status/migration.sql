@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "AdoptionStatus" ADD VALUE 'REQUEST_ADOPTION';
