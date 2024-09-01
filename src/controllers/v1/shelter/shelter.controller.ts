@@ -1,6 +1,7 @@
 import { catchAsync } from "@utils/catchAsync";
 import { get as getShelters, find as findShelter, create as createShelter, update as updateShelter, remove as removeShelter } from "@services/v1/shelter.service";
 import { shelterCreateValidatorType } from "@validator/v1/shelter.validator";
+import { map } from "lodash";
 
 export const get = catchAsync(async (c) => {
 
@@ -12,9 +13,10 @@ export const get = catchAsync(async (c) => {
 export const find = catchAsync(async (c) => {
 
   const shelterId = c.req.param("shelterId");
-  const result = await findShelter({ id: shelterId });
+  const shelters = await findShelter({ id: shelterId });
+  const pets = map(shelters?.pets, ({ pets: pet, status }) => ({ ...pet, status }));
 
-  return c.json({ data: result });
+  return c.json({ data: { ...shelters, pets } });
 });
 
 export const create = catchAsync(async (c) => {

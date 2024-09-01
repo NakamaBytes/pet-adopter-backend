@@ -11,10 +11,10 @@ export const find = ({ id, name }: ShelterTypes) => {
       ],
     },
     include: {
-      PetShelter: {
-        select: {
-          id: true,
-          Pets: true
+      pets: {
+        include: {
+          pets: true
+
         }
       }
     }
@@ -29,7 +29,7 @@ export const create = ({ data, userId }: { data: ShelterPayload; userId: string;
   return prisma.shelter.create({
     data: {
       ...data,
-      UserShelter: {
+      users: {
         create: {
           userId,
           role: "OWNER"
@@ -43,7 +43,7 @@ export const update = ({ data, userId, shelterId }: { data: ShelterPayload; user
   return prisma.shelter.update({
     where: {
       id: shelterId,
-      UserShelter: {
+      users: {
         every: {
           userId: userId,
           role: "OWNER",
@@ -60,7 +60,7 @@ export const remove = ({ userId, shelterId }: { userId: string; shelterId: strin
   return prisma.shelter.delete({
     where: {
       id: shelterId,
-      UserShelter: {
+      users: {
         every: {
           userId: userId,
           role: "OWNER"
