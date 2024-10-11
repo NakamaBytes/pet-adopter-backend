@@ -112,7 +112,7 @@ export const create = ({ data, userId }: { data: PetPayload; userId: string; }) 
         create: {
           status: "NOT_AVAILABLE",
           userId: userId,
-          isCurrentUser: true
+          isCurrentUser: true,
         }
       }
     }
